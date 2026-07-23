@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: myhost }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: myhost } }
+  template:
+    metadata:
+      labels: { app: myhost }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9464"
+    spec:
+      terminationGracePeriodSeconds: 45
+      containers:
+        - name: app
+          image: myhost:0.1.0
+          ports:
+            - { name: http, containerPort: 8080 }
+            - { name: metrics, containerPort: 9464 }
+          env:
+            - { name: APP_ENV, value: prod }
+            - { name: APP_OTEL__OTLP_ENDPOINT, value: "http://otel-collector:4317" }
+          startupProbe:
+            httpGet: { path: /healthz/startup, port: http }
+            failureThreshold: 30
+            periodSeconds: 2
+          readinessProbe:
+            httpGet: { path: /healthz/ready, port: http }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz/live, port: http }
+            periodSeconds: 10
+          lifecycle:
+            preStop: { exec: { command: ["sh", "-c", "sleep 5"] } }
+          resources:
+            requests: { cpu: 200m, memory: 256Mi }
+            limits:   { cpu: 1000m, memory: 1Gi }
