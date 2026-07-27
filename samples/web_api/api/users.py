@@ -3,8 +3,8 @@ from typing import Annotated
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends
 
-from app.container import AppContainer
-from app.services.user_service import UserService
+from samples.web_api.container import AppContainer
+from samples.web_api.services.user_service import UserService
 
 router = APIRouter(prefix="/users", tags=["users"])
 

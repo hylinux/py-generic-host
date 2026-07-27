@@ -1,5 +1,5 @@
 import pytest
-from app.container import AppContainer
+from samples.web_api.container import AppContainer
 
 
 def test_container_resolves_user_service():

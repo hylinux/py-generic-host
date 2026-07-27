@@ -1,6 +1,6 @@
 import httpx
 import structlog
-from app.settings import ExternalApiSettings
+from samples.web_api.settings import ExternalApiSettings
 
 from py_generic_host.resilience.retry import default_retry
 

@@ -1,5 +1,5 @@
 import pytest
-from app.container import AppContainer
+from samples.web_api.container import AppContainer
 
 
 @pytest.fixture
@@ -11,7 +11,7 @@ def container() -> AppContainer:
 
 @pytest.fixture
 async def http_client():
-    from app.api import register_routes
+    from samples.web_api.api import register_routes
     from fastapi import FastAPI
     from httpx import ASGITransport, AsyncClient
 

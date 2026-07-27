@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from . import items, users
+from ....app.api import items, users
 
 
 def register_routes(app: FastAPI) -> None:
