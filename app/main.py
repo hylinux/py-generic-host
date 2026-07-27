@@ -7,7 +7,6 @@ from fastapi import FastAPI
 
 from app.api import register_routes
 from app.container import AppContainer
-from py_generic_host.config.monitor import ConfigWatcher
 from py_generic_host.hosting.builder import HostContext, WebHostBuilder
 from py_generic_host.logging_.setup import configure_logging
 from py_generic_host.telemetry.instrumentation import auto_instrument
@@ -56,7 +55,6 @@ async def amain() -> None:
         .use_settings(settings)
         .use_container(container)
         .use_urls(settings.http_host, settings.http_port)
-        .add_hosted_service(ConfigWatcher([".env"], [container.external_options()]))
         .configure_web_app(_configure_app)
         .build()
     )

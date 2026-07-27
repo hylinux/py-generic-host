@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from app.container import AppContainer
-from app.services.user_service import UserService
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends
+
+from app.container import AppContainer
+from app.services.user_service import UserService
 
 router = APIRouter(prefix="/users", tags=["users"])
 

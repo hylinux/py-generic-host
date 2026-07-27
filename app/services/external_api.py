@@ -2,7 +2,6 @@ import httpx
 import structlog
 from app.settings import ExternalApiSettings
 
-from py_generic_host.config.monitor import OptionsMonitor
 from py_generic_host.resilience.retry import default_retry
 
 log = structlog.get_logger("ExternalApi")
@@ -13,7 +12,7 @@ class ExternalApiClient:
     def __init__(
             self,
             client: httpx.AsyncClient,
-            options: OptionsMonitor[ExternalApiSettings],
+            options: ExternalApiSettings,
     ) -> None:
 
         self._client = client
@@ -28,7 +27,7 @@ class ExternalApiClient:
         self,
         path: str,
     ) -> dict:
-        opts = self._opts.current_value
+        opts = self._opts
         url = f"{opts.base_url}{path}"
 
         log.info("external.request", url=url)
