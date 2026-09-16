@@ -324,7 +324,6 @@ class WebHostBuilder[TSettings]:
 
         container = self._require_container()
 
-
         return Host(
             container=container,
             services=services,

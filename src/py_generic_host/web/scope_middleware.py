@@ -28,10 +28,10 @@ class RequestScopeMiddleware:
     def __init__(
             self,
             app: ASGIApp,
-            containr: ResourceContainer,
+            container: ResourceContainer,
     ) -> None:
         self.app = app
-        self.container = self.container
+        self.container = container
 
 
     async def __call__(

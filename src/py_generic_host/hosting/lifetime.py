@@ -7,7 +7,7 @@ class ApplicationLifetime:
     """Application Lifetime
     """
 
-    def __init(self) -> None:
+    def __init__(self) -> None:
         """
         定义应用程序的声明周期
         """
