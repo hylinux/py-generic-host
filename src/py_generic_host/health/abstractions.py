@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import StrEnum
+from typing import ClassVar
 
 
 class HealthStatus(StrEnum):
@@ -21,7 +22,7 @@ class HealthResult:
 
 class IHealthCheck(ABC):
     name: str = "unname"
-    tags: set[str] = field(default_factory=set )
+    tags: ClassVar[set[str]] = set()
 
     @abstractmethod
     async def check(self) -> HealthResult: ... # type: ignore

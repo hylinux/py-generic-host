@@ -1,15 +1,16 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
+from ..di.protocols import AppContainerProtocol
 from .abstractions import HealthStatus
 from .service import HealthCheckService
 
 
-def build_health_router(container) -> APIRouter:
+def build_health_router(container: AppContainerProtocol) -> APIRouter:
     r = APIRouter(tags=["health"])
 
     async def _run(tag: str) -> JSONResponse:
-        svc: HealthCheckService = container.health_service()
+        svc: HealthCheckService = await container.health_service()
         result = await svc.run(tag=tag)
         code = 200 if result["status"] != HealthStatus.UNHEALTHY else 503
         return JSONResponse(result, status_code=code)

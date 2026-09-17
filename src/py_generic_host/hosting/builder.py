@@ -2,19 +2,17 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TypeVar
+from typing import Self
 
 from fastapi import FastAPI
 
-from ..di.protocols import ResourceContainer
+from ..di.protocols import AppContainerProtocol
 from ..health.endpoints import build_health_router
 from ..web.scope_middleware import RequestScopeMiddleware
 from ..web.uvicorn_service import UvicornHostedService
 from .host import Host, HostOptions
 from .hosted_service import IHostedService
 from .lifetime import ApplicationLifetime
-
-TSettings = TypeVar("TSettings")
 
 
 @dataclass
@@ -34,7 +32,7 @@ class HostContext[TSettings]:
     """
 
     settings: TSettings | None = None
-    container: ResourceContainer | None = None
+    container: AppContainerProtocol | None = None
     services: list[IHostedService] = field(default_factory=list)
     lifetime: ApplicationLifetime | None = None
 
@@ -53,7 +51,7 @@ class WebHostBuilder[TSettings]:
     def __init__(self) -> None:
 
         self._settings: TSettings | None = None
-        self._container: ResourceContainer | None = None
+        self._container: AppContainerProtocol | None = None
         self._lifetime: ApplicationLifetime | None = None
 
         self._host_options: HostOptions | None = None
@@ -88,7 +86,7 @@ class WebHostBuilder[TSettings]:
     def use_settings(
             self,
             settings: TSettings,
-    ) -> WebHostBuilder:
+    ) -> Self:
         """
         注入应用配置对象
 
@@ -110,8 +108,8 @@ class WebHostBuilder[TSettings]:
 
     def use_container(
             self,
-            container: ResourceContainer,
-    ) -> WebHostBuilder:
+            container: AppContainerProtocol,
+    ) -> Self:
         """
         注入 DI Contianer
         """
@@ -122,7 +120,7 @@ class WebHostBuilder[TSettings]:
     def use_lifetime(
             self,
             lifetime: ApplicationLifetime,
-    ) -> WebHostBuilder:
+    ) -> Self:
         """"
         注入Application LifeTime
 
@@ -139,7 +137,7 @@ class WebHostBuilder[TSettings]:
     def use_host_options(
             self,
             options: HostOptions,
-    ) -> WebHostBuilder:
+    ) -> Self:
         """
         注入 HostOptions
 
@@ -160,7 +158,7 @@ class WebHostBuilder[TSettings]:
             self,
             host: str,
             port: int,
-    ) -> WebHostBuilder:
+    ) -> Self:
         """
         设置Web Server的监听地址和端口
         """
@@ -173,7 +171,7 @@ class WebHostBuilder[TSettings]:
     def use_app_title(
             self,
             title: str,
-    ) -> WebHostBuilder:
+    ) -> Self:
 
         self._app_title = title
         return self
@@ -181,7 +179,7 @@ class WebHostBuilder[TSettings]:
     def enable_health_checks(
             self,
             enabled: bool = True,
-    ) -> WebHostBuilder:
+    ) -> Self:
 
         self._enable_health_checks = enabled
         return self
@@ -189,7 +187,7 @@ class WebHostBuilder[TSettings]:
     def enable_request_scope(
             self,
             enabled: bool = True,
-    ) -> WebHostBuilder:
+    ) -> Self:
 
         self._enable_request_scope = enabled
         return self
@@ -197,7 +195,7 @@ class WebHostBuilder[TSettings]:
     def add_hosted_service(
             self,
             svc: IHostedService,
-    ) -> WebHostBuilder:
+    ) -> Self:
         """
         添加HostedService.
 
@@ -215,7 +213,7 @@ class WebHostBuilder[TSettings]:
     def configure_services(
             self,
             fn: Callable[[HostContext[TSettings]], None],
-    ) -> WebHostBuilder:
+    ) -> Self:
         """
         配置服务
 
@@ -233,7 +231,7 @@ class WebHostBuilder[TSettings]:
     def configure_middleware(
             self,
             fn: Callable[[HostContext[TSettings], FastAPI], None],
-    ) -> WebHostBuilder:
+    ) -> Self:
         """
         配置 Middleware
 
@@ -246,7 +244,7 @@ class WebHostBuilder[TSettings]:
     def configure_endpoint(
             self,
             fn: Callable[[HostContext[TSettings], FastAPI], None],
-    ) -> WebHostBuilder:
+    ) -> Self:
         """
         配置 API endpoints / routers
 
@@ -265,7 +263,7 @@ class WebHostBuilder[TSettings]:
     def configure_web_app(
             self,
             fn: Callable[[HostContext[TSettings], FastAPI], None],
-    ) -> WebHostBuilder:
+    ) -> Self:
         """
         完全不需要的方法,可以不用调用
         """
@@ -336,7 +334,7 @@ class WebHostBuilder[TSettings]:
     # 私有方法定义区域
     # --------------------------------------------------------------------------
 
-    def _create_build_context(self) -> HostContext:
+    def _create_build_context(self) -> HostContext[TSettings]:
         """
         创建build 专用的上下文
 
@@ -389,7 +387,7 @@ class WebHostBuilder[TSettings]:
         return app
 
 
-    def _require_container(self) -> ResourceContainer:
+    def _require_container(self) -> AppContainerProtocol:
         """
         获取必要的容器
         """

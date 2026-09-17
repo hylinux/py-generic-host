@@ -33,10 +33,10 @@ class SupportsCrashHandler(Protocol):
 
 class BackgroundService(IHostedService):
 
-    def __init__(self) -> None:
+    def __init__(self, stop_timeout: float = 60.0 ) -> None:
         self._task : asyncio.Task[None] | None = None
         self._log = structlog.get_logger(self.__class__.__name__)
-
+        self._stop_timeout = stop_timeout
         self._crash_handler: CrashHandler | None = None
 
 
@@ -66,7 +66,7 @@ class BackgroundService(IHostedService):
             stopping.set()
 
         try:
-            await asyncio.wait_for(self._task, timeout=60)
+            await asyncio.wait_for(self._task, timeout=self._stop_timeout)
         except asyncio.TimeoutError:  # noqa: UP041
             self._task.cancel()
 

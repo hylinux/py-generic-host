@@ -4,9 +4,9 @@ import asyncio
 
 import structlog
 from fastapi import FastAPI
-
 from samples.web_api.api import register_routes
 from samples.web_api.container import AppContainer
+
 from py_generic_host.hosting.builder import HostContext, WebHostBuilder
 from py_generic_host.logging_.setup import configure_logging
 from py_generic_host.telemetry.instrumentation import auto_instrument
